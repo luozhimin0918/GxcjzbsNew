@@ -22,6 +22,16 @@ ext {
             recyclerViewV7 : "com.android.support:recyclerview-v7:${supportLibrary}",
             supportAnnotation : "com.android.support:support-annotations:${supportLibrary}",
             butterKnifeCompoler : "com.jakewharton:butterknife-compiler:8.4.0",
-            supportConstraintLayout : 'com.android.support.constraint:constraint-layout:1.0.2'
+            supportConstraintLayout : 'com.android.support.constraint:constraint-layout:1.0.2',
+            GreenRobotEventbus : 'org.greenrobot:eventbus:3.0.0',
+            PnikosisMaterialishProgress : 'com.pnikosis:materialish-progress:1.7',
+            JsonwebtokenJJwt : 'io.jsonwebtoken:jjwt:0.7.0',
+            JakewhartonButterknife : 'com.jakewharton:butterknife:8.4.0',
+            GithubBumptechGlide : 'com.github.bumptech.glide:glide:3.7.0',
+            JakewhartonDisklrucache :'com.jakewharton:disklrucache:2.0.2',
+            AlibabaFastJson : 'com.alibaba:fastjson:1.1.46.android',
+            Volley : 'com.android.volley:volley:1.0.0',
+            ReactivexRxandroid : 'io.reactivex:rxandroid:1.2.1',
+            LuoZhiMinSauronBase64 : 'com.github.luozhimin0918.LuoComLibJitPack:sauronBase64:m1.0.36'
     ]
 }
