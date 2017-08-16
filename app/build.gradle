@@ -50,7 +50,7 @@ dependencies {
     /**
      *publiclibrary  moudle
      */
-    releaseCompile project(path: ':publiclibrary', configuration: 'release')
-    debugCompile project(path: ':publiclibrary', configuration: 'debug')
+    releaseCompile project(path: ':LuoPublicLibrary', configuration: 'release')
+    debugCompile project(path: ':LuoPublicLibrary', configuration: 'debug')
 
 }
