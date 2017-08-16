@@ -20,6 +20,8 @@ ext {
     supportDependencies = [
             appcompatV7 : "com.android.support:appcompat-v7:${supportLibrary}",
             recyclerViewV7 : "com.android.support:recyclerview-v7:${supportLibrary}",
-            supportAnnotation : "com.android.support:support-annotations:${supportLibrary}"
+            supportAnnotation : "com.android.support:support-annotations:${supportLibrary}",
+            butterKnifeCompoler : "com.jakewharton:butterknife-compiler:8.4.0",
+            supportConstraintLayout : 'com.android.support.constraint:constraint-layout:1.0.2'
     ]
 }

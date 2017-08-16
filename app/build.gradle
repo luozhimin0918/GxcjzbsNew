@@ -38,11 +38,19 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile librarys.appcompatV7
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+
+    /**
+     *compile  librarys
+     */
+    compile librarys.appcompatV7
+    compile librarys.supportConstraintLayout
+    apt librarys.butterKnifeCompoler
+
+    /**
+     *publiclibrary  moudle
+     */
     releaseCompile project(path: ':publiclibrary', configuration: 'release')
     debugCompile project(path: ':publiclibrary', configuration: 'debug')
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
 
 }
