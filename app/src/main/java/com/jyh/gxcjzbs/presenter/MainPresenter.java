@@ -24,6 +24,7 @@ public class MainPresenter extends BasePresenter {
     public void initConfig() {
         queue = mainActivity.getQueue();
         request = new VolleyRequest(mContext, queue);
+        mainActivity.sss.setText("luozhimin");
     }
 
 
