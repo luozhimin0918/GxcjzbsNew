@@ -23,3 +23,17 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-dontwarn android.databinding.**
+-keep class android.databinding.**{*;}
+
+-dontwarn android.databinding.ViewDataBinding.**
+-keep class android.databinding.ViewDataBinding.**{*;}
+
+-dontwarn io.jsonwebtoken.impl.**
+-keep class io.jsonwebtoken.impl.**{*;}
+
+-dontwarn com.fasterxml.jackson.databind.ext.**
+-keep class com.fasterxml.jackson.databind.ext.**{*;}
+
+-dontwarn rx.internal.util.unsafe.**
+-keep class rx.internal.util.unsafe.**{*;}

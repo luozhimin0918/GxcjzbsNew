@@ -2,34 +2,56 @@ apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
 
 //android配置
-def config = rootProject.ext.android
+def configAnd = rootProject.ext.android
 
 //相关库依赖
 def librarys = rootProject.ext.supportDependencies
 
 android {
-    compileSdkVersion config.compileSdkVersion
-    buildToolsVersion config.buildToolsVersion
-
+    signingConfigs {
+        config {
+            keyAlias 'cjdjczbs'
+            keyPassword 'cjdjczbs'
+            storeFile file('./keystore/cjdjczbs.jks')
+            storePassword 'cjdjczbs'
+        }
+    }
+    compileSdkVersion configAnd.compileSdkVersion
+    buildToolsVersion configAnd.buildToolsVersion
     defaultConfig {
         applicationId "com.jyh.gxcjzbs"
-        minSdkVersion config.minSdkVersion
-        targetSdkVersion config.targetSdkVersion
-        versionCode config.versionCode
-        versionName config.versionName
+        minSdkVersion configAnd.minSdkVersion
+        targetSdkVersion configAnd.targetSdkVersion
+        versionCode configAnd.versionCode
+        versionName configAnd.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+//            buildConfigField "boolean", "LOG_DEBUG", "false"//是否输出LOG信息
+            minifyEnabled true//混淆编译
+            zipAlignEnabled true
+            //移除无用的资源文件
+
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+//            buildConfigField "boolean", "LOG_DEBUG", "true"//是否输出LOG信息
+            minifyEnabled false//混淆编译
+            zipAlignEnabled false
+            //移除无用的资源文件
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     packagingOptions {
         exclude 'META-INF/LICENSE'
-             //        exclude 'META-INF/DEPENDENCIES'
-            //        exclude 'META-INF/NOTICE'
-           //        exclude 'META-INF/LICENSE.txt'
+        //        exclude 'META-INF/DEPENDENCIES'
+        //        exclude 'META-INF/NOTICE'
+        //        exclude 'META-INF/LICENSE.txt'
     }
 }
 
