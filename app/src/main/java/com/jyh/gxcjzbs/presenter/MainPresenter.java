@@ -65,7 +65,7 @@ public class MainPresenter extends BasePresenter {
             @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onTabSelect(int position) {
-                mainActivity.mViewPager.setCurrentItem(position,false);
+                mainActivity.mViewPager.setCurrentItem(position,true);
 
             }
 
