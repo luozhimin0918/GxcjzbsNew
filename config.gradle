@@ -33,6 +33,8 @@ ext {
             Volley : 'com.android.volley:volley:1.0.0',
             ReactivexRxandroid : 'io.reactivex:rxandroid:1.2.1',
             LuoZhiMinSauronBase64 : 'com.github.luozhimin0918.LuoComLibJitPack:sauronBase64:m1.0.36',
-            LuoZhiMin_FlycoTabLayout_Lib : 'com.github.luozhimin0918.LuoComLibJitPack:FlycoTabLayout_Lib:m1.0.39'
+            LuoZhiMin_FlycoTabLayout_Lib : 'com.github.luozhimin0918.LuoComLibJitPack:FlycoTabLayout_Lib:m1.0.39',
+            KLogLuo :"com.github.luozhimin0918.LuoComLibJitPack:kloglibraryMy:m1.0.39",
+            PercentSupportExtends : "com.github.luozhimin0918.LuoComLibJitPack:percent-support-extends:m1.0.39"
     ]
 }

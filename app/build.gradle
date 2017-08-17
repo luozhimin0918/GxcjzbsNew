@@ -28,7 +28,7 @@ android {
     }
     buildTypes {
         release {
-//            buildConfigField "boolean", "LOG_DEBUG", "false"//是否输出LOG信息
+            buildConfigField "boolean", "LOG_DEBUG", "false"//是否输出LOG信息
             minifyEnabled true//混淆编译
             zipAlignEnabled true
             //移除无用的资源文件
@@ -38,7 +38,7 @@ android {
             signingConfig signingConfigs.config
         }
         debug {
-//            buildConfigField "boolean", "LOG_DEBUG", "true"//是否输出LOG信息
+            buildConfigField "boolean", "LOG_DEBUG", "true"//是否输出LOG信息
             minifyEnabled false//混淆编译
             zipAlignEnabled false
             //移除无用的资源文件
@@ -67,6 +67,8 @@ dependencies {
     compile librarys.appcompatV7
     compile librarys.supportConstraintLayout
     compile librarys.LuoZhiMin_FlycoTabLayout_Lib
+    compile librarys.PercentSupportExtends
+    compile librarys.KLogLuo
     apt librarys.butterKnifeCompoler
     /**
      * publiclibrary  moudle
