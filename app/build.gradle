@@ -44,11 +44,11 @@ dependencies {
      */
     compile librarys.appcompatV7
     compile librarys.supportConstraintLayout
+    compile librarys.LuoZhiMin_FlycoTabLayout_Lib
     apt librarys.butterKnifeCompoler
     /**
      * publiclibrary  moudle
      */
     releaseCompile project(path: ':LuoPublicLibrary', configuration: 'release')
     debugCompile project(path: ':LuoPublicLibrary', configuration: 'debug')
-    compile files('libs/flycoTablayout.jar')
 }
