@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.zhy.android.percent.support.PercentRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,21 +11,27 @@
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_2"
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_heightPercent="92%"
        />
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="1dp"
+        android:id="@+id/linOne"
+        android:layout_below="@+id/vp_2"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="0dp"
+        app:layout_heightPercent="0.2%"
         android:background="@color/gray_btn_bg_color"
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="8dp">
     </LinearLayout>
     <com.flyco.tablayout.CommonTabLayout
         android:id="@+id/tl_2"
+        android:layout_below="@id/linOne"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
+        app:layout_heightPercent="7.8%"
         android:background="@color/white"
         tl:tl_iconHeight="23dp"
         tl:tl_iconWidth="23dp"
@@ -38,4 +45,4 @@
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="8dp" />
 
-</LinearLayout>
+</com.zhy.android.percent.support.PercentRelativeLayout>
