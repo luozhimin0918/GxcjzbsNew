@@ -69,6 +69,7 @@ dependencies {
     compile librarys.LuoZhiMin_FlycoTabLayout_Lib
     compile librarys.PercentSupportExtends
     compile librarys.KLogLuo
+    compile librarys.UmengAnalytics
     apt librarys.butterKnifeCompoler
     /**
      * publiclibrary  moudle
