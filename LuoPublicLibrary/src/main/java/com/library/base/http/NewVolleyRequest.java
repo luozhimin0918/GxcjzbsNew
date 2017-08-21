@@ -27,6 +27,8 @@ public class NewVolleyRequest {
     private RequestQueue mQueue;
 
     private String msg;
+    private int status;
+    private String data;
 
     //反射得到要解析的数据
     private MyType superclassTypeParameter;
@@ -50,32 +52,32 @@ public class NewVolleyRequest {
         isToastFailed = toastFailed;
     }
 
-    public <T> void doGet(String url, HttpListener<T> mHttpListener) {
-        enqueue(Request.Method.GET, url, null, mHttpListener);
+    public <T> void doGet(String url,boolean  isCode, HttpListener<T> mHttpListener) {
+        enqueue(Request.Method.GET,isCode, url, null, mHttpListener);
     }
 
-    public <T> void doGet(String url, Map<String, String> mParams, HttpListener<T> mHttpListener) {
-        enqueue(Request.Method.GET, url, mParams, mHttpListener);
+    public <T> void doGet(String url,boolean  isCode, Map<String, String> mParams, HttpListener<T> mHttpListener) {
+        enqueue(Request.Method.GET,isCode, url, mParams, mHttpListener);
     }
 
-    public <T> void doGet(String url, JSONObject mParams, HttpListener<T> mHttpListener) {
+    public <T> void doGet(String url,boolean  isCode, JSONObject mParams, HttpListener<T> mHttpListener) {
         try {
             url = url + EncryptionUtils.createJWT(VarConstant.KEY, mParams.toString());
-            enqueue(Request.Method.GET, url, null, mHttpListener);
+            enqueue(Request.Method.GET,isCode, url, null, mHttpListener);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public <T> void doPost(String url, HttpListener<T> mHttpListener) {
-        doPost(url, null, mHttpListener);
+    public <T> void doPost(String url,boolean  isCode, HttpListener<T> mHttpListener) {
+        doPost(url,isCode, null, mHttpListener);
     }
 
-    public <T> void doPost(String url, Map<String, String> mParams, HttpListener<T> mHttpListener) {
-        enqueue(Request.Method.POST, url, mParams, mHttpListener);
+    public <T> void doPost(String url,boolean  isCode, Map<String, String> mParams, HttpListener<T> mHttpListener) {
+        enqueue(Request.Method.POST,isCode, url, mParams, mHttpListener);
     }
 
-    private <T> void enqueue(int method, final String url,
+    private <T> void enqueue(int method, final boolean isCode, final String url,
                              final Map<String, String> mParams, final HttpListener<T> mHttpListener) {
 
         this.superclassTypeParameter = getSuperclassTypeParameter(mHttpListener.getClass());
@@ -95,9 +97,16 @@ public class NewVolleyRequest {
                                 LogUtil.e("toJsonString", "响应:" + response);
 
                                 org.json.JSONObject object = new org.json.JSONObject(response);
-                                int status = object.getInt("code");
-                                String data = object.getString("data");
-                                msg = object.optString("msg");
+                                if(isCode){
+                                    status = object.getInt("code");
+                                    data = object.getString("data");
+                                    msg = object.optString("msg");
+                                }else{
+                                    status = 200;
+                                    data =response;
+                                    msg ="获取成功";
+                                }
+
 
                                 if (status == 200) {
                                     T resultT = null;

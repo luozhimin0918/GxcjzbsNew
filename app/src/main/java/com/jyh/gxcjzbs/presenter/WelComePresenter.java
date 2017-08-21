@@ -23,6 +23,7 @@ import com.jyh.gxcjzbs.common.SpConstant;
 import com.jyh.gxcjzbs.common.UrlConstant;
 import com.jyh.gxcjzbs.fragment.RankFragment;
 import com.jyh.gxcjzbs.model.InfoBean;
+import com.jyh.gxcjzbs.model.VersionMole;
 import com.jyh.gxcjzbs.view.BounceTopEnter;
 import com.jyh.gxcjzbs.view.MaterialDialog;
 import com.jyh.gxcjzbs.view.OnBtnClickL;
@@ -32,6 +33,7 @@ import com.library.base.http.HttpListener;
 import com.library.base.http.NewVolleyRequest;
 import com.library.base.http.VolleyRequest;
 import com.library.util.SPUtils;
+import com.library.util.SystemUtil;
 import com.socks.library.KLog;
 import com.umeng.analytics.MobclickAgent;
 
@@ -66,7 +68,7 @@ public class WelComePresenter extends BasePresenter {
     }
 
     public void initConfig() {
-        request.doGet(UrlConstant.URL_INDEX, new HttpListener<InfoBean>(){
+        request.doGet(UrlConstant.URL_INDEX,true, new HttpListener<InfoBean>(){
 
             @Override
             protected void onResponse(InfoBean infoBean) {
@@ -75,6 +77,28 @@ public class WelComePresenter extends BasePresenter {
                     KLog.json(""+ JSON.toJSONString(infoBean));
                     if(infoBean.getAppinfo()!=null){
                         SPUtils.save(mContext,SpConstant.APPINFO_REQUIRE_LOGIN,infoBean.getAppinfo().getRequire_login());
+                    }
+                }
+
+            }
+
+            @Override
+            protected void onErrorResponse(VolleyError error) {
+                super.onErrorResponse(error);
+            }
+        });
+    }
+    public void showVersionUpdate(){
+        request.doGet(UrlConstant.URL_VERSION,false, new HttpListener<VersionMole>(){
+
+            @Override
+            protected void onResponse(VersionMole versionMole) {
+
+                if(versionMole!=null){
+                    KLog.json(""+ JSON.toJSONString(versionMole));
+                    int versionCode = SystemUtil.getVersionCode(mContext);
+                    if(versionMole.getVersionCode()>versionCode){
+
                     }
                 }
 

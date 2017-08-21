@@ -41,7 +41,7 @@ public class WelcomeActivity extends BaseActivity implements WelComePresenter.Ba
         welComePresenter.setBackListening(this);
         welComePresenter.initDefault();
         if(NetUtils.isNetworkAvailable(getContext())){
-            welComePresenter.initConfig();
+            welComePresenter.showVersionUpdate();
         }else{
             welComePresenter.showNotNetwork();
         }
