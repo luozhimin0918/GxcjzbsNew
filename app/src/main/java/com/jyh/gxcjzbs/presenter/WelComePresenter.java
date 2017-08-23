@@ -115,8 +115,8 @@ public class WelComePresenter extends BasePresenter {
 
                 if(versionMole!=null){
                     KLog.json(""+ JSON.toJSONString(versionMole));
-                    int versionCode = SystemUtil.getVersionCode(mContext);
-                    if(5>versionCode){
+                     int versionCode = SystemUtil.getVersionCode(mContext);
+                    if(versionMole.getVersionCode()>versionCode){
                         // 启动更新
                         if (testDialog!=null&&!testDialog.isShowing()) {
                             testDialog.content(versionMole.getDescription())//
@@ -133,12 +133,15 @@ public class WelComePresenter extends BasePresenter {
                             }, new OnBtnClickL() {// right btn click listener
                                 @Override
                                 public void onBtnClick() {
-                                    Intent intent = new Intent();
-                                    intent.setAction(Intent.ACTION_VIEW);
-                                    intent.setData(Uri.parse("http://sldfksl.apk"));
-                                    mContext.startActivity(intent);
-                                    testDialog.dismiss();
+                                    if(!TextUtils.isEmpty(versionMole.getUrl())){
+                                        Intent intent = new Intent();
+                                        intent.setAction(Intent.ACTION_VIEW);
+                                        intent.setData(Uri.parse(versionMole.getUrl()));
+                                        mContext.startActivity(intent);
+                                    }
+
                                     handler.sendEmptyMessageDelayed(111, 100);
+                                    testDialog.dismiss();
                                 }
                             });
                             testDialog.setCanceledOnTouchOutside(false);
