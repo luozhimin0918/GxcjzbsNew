@@ -159,6 +159,7 @@ public class WelComePresenter extends BasePresenter {
             @Override
             protected void onErrorResponse(VolleyError error) {
                 super.onErrorResponse(error);
+                handler.sendEmptyMessage(111);//initConfig
             }
         });
     }
