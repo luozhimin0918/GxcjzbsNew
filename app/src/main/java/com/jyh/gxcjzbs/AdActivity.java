@@ -27,6 +27,14 @@ import com.jyh.gxcjzbs.utils.LoginInfoUtils;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+
 /**
  * 广告界面
  *
@@ -39,7 +47,6 @@ public class AdActivity extends FragmentActivity implements OnClickListener {
     private ImageView img;
     private String url;
     private Intent intent;
-    private Timer timer;
     private String imgpath;
 
     private boolean isNeedLogin;
@@ -51,14 +58,22 @@ public class AdActivity extends FragmentActivity implements OnClickListener {
             // TODO Auto-generated method stub
             switch (msg.what) {
                 case 1:
-                    timer = new Timer();
-                    timer.schedule(new TimerTask() {
+                    countDown(5).subscribe(new Subscriber<Integer>() {
+                        @Override
+                        public void onCompleted() {
+                           startA_ctivity();
+                        }
 
                         @Override
-                        public void run() {
+                        public void onError(Throwable e) {
                             startA_ctivity();
                         }
-                    }, 2 * 1000);
+
+                        @Override
+                        public void onNext(Integer integer) {
+                            ad_btn.setText(integer+"S 跳过");
+                        }
+                    });
                     break;
                 case 2:
                     startA_ctivity();
@@ -69,6 +84,22 @@ public class AdActivity extends FragmentActivity implements OnClickListener {
             return false;
         }
     });
+    private Observable<Integer> countDown(int time){
+        final int countTime = time;
+        return Observable.interval(0,1, TimeUnit.SECONDS)
+                .map(new Func1<Long, Integer>() {
+                    @Override
+                    public Integer call(Long aLong) {
+                        return countTime-aLong.intValue();
+                    }
+                })
+                .take(countTime+1)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread());
+
+    }
     private WebView webView;
     private TextView ad_btn;
 
@@ -123,11 +154,12 @@ public class AdActivity extends FragmentActivity implements OnClickListener {
         imgpath = getIntent().getStringExtra("image");
         url = getIntent().getStringExtra("url");
         img = (ImageView) findViewById(R.id.img);
-        Glide.with(this).load(imgpath);
+        Glide.with(this).load(imgpath).into(img);
         img.setOnClickListener(this);
         findViewById(R.id.ad_img_back).setOnClickListener(this);
         intent = new Intent(AdActivity.this, MainActivity.class);
 
+        handler.sendEmptyMessage(1);
     }
 
 
@@ -145,8 +177,7 @@ public class AdActivity extends FragmentActivity implements OnClickListener {
 //                    startActivityForResult(intent, 200);
 //                }
                 if (url != null && !url.equals("")) {
-                    timer.cancel();
-                    timer.purge();
+
                     ad_btn.setVisibility(View.GONE);
                     img.setVisibility(View.GONE);
                     findViewById(R.id.webviewId).setVisibility(View.VISIBLE);
@@ -162,8 +193,6 @@ public class AdActivity extends FragmentActivity implements OnClickListener {
 
     @Override
     public void onBackPressed() {
-        timer.cancel();
-        timer.purge();
         startA_ctivity();
     }
 
