@@ -128,6 +128,7 @@ public class WelComePresenter extends BasePresenter {
                                 @Override
                                 public void onBtnClick() {
                                     handler.sendEmptyMessageDelayed(111, 100);
+
                                     testDialog.dismiss();
                                 }
                             }, new OnBtnClickL() {// right btn click listener
@@ -146,7 +147,11 @@ public class WelComePresenter extends BasePresenter {
                             });
                             testDialog.setCanceledOnTouchOutside(false);
                         }
+                    }else{
+                        handler.sendEmptyMessage(111);//initConfig
                     }
+                }else{
+                    handler.sendEmptyMessage(111);//initConfig
                 }
 
             }
