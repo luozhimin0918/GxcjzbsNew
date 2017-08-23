@@ -81,6 +81,11 @@ public class SPUtils
         return sp.getStringSet(key, null);
     }
 
+    public static Set<String> getStringSet(Context mContext, String fileName, String key) {
+        initial2(mContext, fileName);
+        return sp.getStringSet(key, null);
+    }
+
     private static void initial(Context mContext)
     {
         sp = mContext.getSharedPreferences(NAME, 0);

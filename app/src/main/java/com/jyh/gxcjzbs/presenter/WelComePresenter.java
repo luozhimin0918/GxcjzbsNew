@@ -1,11 +1,17 @@
 package com.jyh.gxcjzbs.presenter;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.alibaba.fastjson.JSON;
@@ -13,6 +19,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.jyh.gxcjzbs.AdActivity;
 import com.jyh.gxcjzbs.MainActivity;
 import com.jyh.gxcjzbs.R;
 import com.jyh.gxcjzbs.WelcomeActivity;
@@ -75,9 +82,21 @@ public class WelComePresenter extends BasePresenter {
 
                 if(infoBean!=null){
                     KLog.json(""+ JSON.toJSONString(infoBean));
+
+
                     if(infoBean.getAppinfo()!=null){
                         SPUtils.save(mContext,SpConstant.APPINFO_REQUIRE_LOGIN,infoBean.getAppinfo().getRequire_login());
                     }
+
+                    if(infoBean.getLoad_ad()!=null&& !TextUtils.isEmpty(infoBean.getLoad_ad().getImage())){
+                        Intent intent = new Intent(mContext, AdActivity.class);
+                        intent.putExtra("image", infoBean.getLoad_ad().getImage());
+                        intent.putExtra("url", infoBean.getLoad_ad().getImage());
+                        mContext.startActivity(intent);
+                        welcomeActivity.overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+                        welcomeActivity.finish();
+                    }
+
                 }
 
             }
@@ -92,13 +111,38 @@ public class WelComePresenter extends BasePresenter {
         request.doGet(UrlConstant.URL_VERSION,false, new HttpListener<VersionMole>(){
 
             @Override
-            protected void onResponse(VersionMole versionMole) {
+            protected void onResponse(final VersionMole versionMole) {
 
                 if(versionMole!=null){
                     KLog.json(""+ JSON.toJSONString(versionMole));
                     int versionCode = SystemUtil.getVersionCode(mContext);
-                    if(versionMole.getVersionCode()>versionCode){
-
+                    if(5>versionCode){
+                        // 启动更新
+                        if (testDialog!=null&&!testDialog.isShowing()) {
+                            testDialog.content(versionMole.getDescription())//
+                                    .btnText("取消", "确定")
+                                    .showAnim(bas_in)
+                                    .dismissAnim(bas_out)
+                                    .show();
+                            testDialog.setOnBtnClickL(new OnBtnClickL() {// left btn
+                                @Override
+                                public void onBtnClick() {
+                                    handler.sendEmptyMessageDelayed(111, 100);
+                                    testDialog.dismiss();
+                                }
+                            }, new OnBtnClickL() {// right btn click listener
+                                @Override
+                                public void onBtnClick() {
+                                    Intent intent = new Intent();
+                                    intent.setAction(Intent.ACTION_VIEW);
+                                    intent.setData(Uri.parse("http://sldfksl.apk"));
+                                    mContext.startActivity(intent);
+                                    testDialog.dismiss();
+                                    handler.sendEmptyMessageDelayed(111, 100);
+                                }
+                            });
+                            testDialog.setCanceledOnTouchOutside(false);
+                        }
                     }
                 }
 
@@ -127,9 +171,7 @@ public class WelComePresenter extends BasePresenter {
                     if(testDialog!=null){
                         testDialog.dismiss();
                     }
-                    if(backlistening!=null){
-                        backlistening.finishW();
-                    }
+                   handler.sendEmptyMessage(222);
 
                 }
             });
@@ -146,6 +188,26 @@ public class WelComePresenter extends BasePresenter {
         this.backlistening=backListen;
     }
 
+
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 111:
+                    initConfig();
+                    break;
+                case 222:
+                    if(backlistening!=null){
+                        backlistening.finishW();
+                    }
+                    break;
+                case 333:
+
+                    break;
+            }
+        }
+    };
 
 
 }
