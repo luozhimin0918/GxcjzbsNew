@@ -2,6 +2,7 @@ package com.jyh.gxcjzbs.presenter;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -31,6 +32,7 @@ import com.jyh.gxcjzbs.common.UrlConstant;
 import com.jyh.gxcjzbs.fragment.RankFragment;
 import com.jyh.gxcjzbs.model.InfoBean;
 import com.jyh.gxcjzbs.model.VersionMole;
+import com.jyh.gxcjzbs.sqlite.SCDataSqlte;
 import com.jyh.gxcjzbs.view.BounceTopEnter;
 import com.jyh.gxcjzbs.view.MaterialDialog;
 import com.jyh.gxcjzbs.view.OnBtnClickL;
@@ -45,7 +47,9 @@ import com.socks.library.KLog;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class WelComePresenter extends BasePresenter {
@@ -56,7 +60,8 @@ public class WelComePresenter extends BasePresenter {
     private  MaterialDialog testDialog;// 网络异常提示Dialog
     private BounceTopEnter bas_in;
     private SlideBottomExit bas_out;
-
+    private boolean isFirstLoading = true;// 用以防止数据库重复读写
+    SCDataSqlte     sqlOpenHelper;
     public WelComePresenter(IBaseView iBaseView) {
         super(iBaseView);
     }
@@ -84,9 +89,110 @@ public class WelComePresenter extends BasePresenter {
                     KLog.json(""+ JSON.toJSONString(infoBean));
 
 
-                    if(infoBean.getAppinfo()!=null){
-                        SPUtils.save(mContext,SpConstant.APPINFO_REQUIRE_LOGIN,infoBean.getAppinfo().getRequire_login());
+                   InfoBean.AppinfoBean  appinfoBean = infoBean.getAppinfo();
+                    if(appinfoBean!=null){
+                        SPUtils.save(mContext,SpConstant.APPINFO_REQUIRE_LOGIN,appinfoBean.getRequire_login());
+                        SPUtils.save(mContext, SpConstant.APPINFO_APPID, appinfoBean.getAppid());
+                        SPUtils.save(mContext, SpConstant.APPINFO_APPNAME, appinfoBean.getName());
+                        SPUtils.save(mContext, SpConstant.APPINFO_GATE, appinfoBean.getGate());
+                        SPUtils.save(mContext, SpConstant.APPINFO_KEFU_URL, appinfoBean.getKefu_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_USERLIST_URL, appinfoBean.getUserlist_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_IMAGES_URL, appinfoBean.getImages_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_COURSE_URL, appinfoBean.getCourse_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_SUMMARY_URL, appinfoBean.getSummary_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_BULLETIN_URL, appinfoBean.getBulletin_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_FN_NAV_URL, appinfoBean.getFn_nav_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_FN_URL,appinfoBean.getFn_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_CJRL_URL, appinfoBean.getCjrl_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_ALTERS_URL, appinfoBean.getAlters_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_HQ_URL, appinfoBean.getHq_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_UPLOAD_IMAGES_URL, appinfoBean.getUpload_images_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_REGISTER_URL, appinfoBean.getRegister_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_CL_URL, appinfoBean.getTactics_url());
+                        SPUtils.save(mContext, SpConstant.APPINFO_CL_BAN, appinfoBean.getTactics_ban_rid());
+                        SPUtils.save(mContext, SpConstant.APPINFO_INDEX_BG, appinfoBean.getIndex_bg());
+                        SPUtils.save(mContext, SpConstant.APPINFO_EMOJI_VERSION_NEW, appinfoBean.getPhiz_version());
                     }
+
+                    // userinfo 用户信息
+                    InfoBean.UserinfoBean userinfoJob = infoBean.getUserinfo();
+                    // videoinfo 直播室信息
+                    InfoBean.VideoInfo2Bean videoinfoJob = infoBean.getVideo_info2();
+                    InfoBean.VideoInfo2Bean.LiveGenseeBeanX detailJob = null;
+                    InfoBean.VideoInfo2Bean.Live108BeanX qinjia = null;
+                    if (videoinfoJob.getType().equals("live_gensee")) {
+                        detailJob = videoinfoJob.getLive_gensee();
+                    } else if (videoinfoJob.getType().equals("live_108")) {
+                        qinjia = videoinfoJob.getLive_108();
+                    }
+                    // roomrole 用户角色信息
+                  List<InfoBean.RoomroleBean> roomrolesJoA = infoBean.getRoomrole();
+
+
+
+
+                    SPUtils.save(mContext, SpConstant.USERINFO_NAME, userinfoJob.getName());
+                    SPUtils.save(mContext, SpConstant.USERINFO_RID, userinfoJob.getRid());
+                    SPUtils.save(mContext,SpConstant.USERINFO_LOGIN_RID,userinfoJob.getRid());
+                    SPUtils.save(mContext, SpConstant.USERINFO_UID, userinfoJob.getId());
+
+                    SPUtils.save(mContext, SpConstant.VIDEO_TYPE,videoinfoJob.getType());
+                    if (videoinfoJob.getType().equals("live_108")) {
+                        if (qinjia != null || !"".equals(qinjia)) {
+                            // gensee
+                            SPUtils.save(mContext, SpConstant.VIDEO_GENSEE_ID, "");
+                            SPUtils.save(mContext, SpConstant.VIDEO_GENSEE_ROOMID, "");
+                            SPUtils.save(mContext, SpConstant.VIDEO_GENSEE_PWD, "");
+                            SPUtils.save(mContext, SpConstant.VIDEO_GENSEE_SITE, "");
+                            SPUtils.save(mContext, SpConstant.VIDEO_GENSEE_CTXZ, "");
+                            // Gotye
+                            SPUtils.save(mContext, SpConstant.VIDEO_GOTYEROOMID, qinjia.getROOMID());
+                            SPUtils.save(mContext, SpConstant.VIDEO_GOTYEPASSWORD, qinjia.getPASSWORD());
+                        }
+                    } else {
+                        if (detailJob != null || !"".equals(detailJob)) {
+                            // gensee
+                            SPUtils.save(mContext, SpConstant.VIDEO_GENSEE_ID, detailJob.getID());
+                            SPUtils.save(mContext, SpConstant.VIDEO_GENSEE_ROOMID, detailJob.getROOMID());
+                            SPUtils.save(mContext, SpConstant.VIDEO_GENSEE_PWD, detailJob.getPASSWORD());
+                            SPUtils.save(mContext, SpConstant.VIDEO_GENSEE_SITE, detailJob.getSITE());
+                            SPUtils.save(mContext, SpConstant.VIDEO_GENSEE_CTXZ, detailJob.getCTX());
+                            // Gotye
+                            SPUtils.save(mContext, SpConstant.VIDEO_GOTYEROOMID, "");
+                            SPUtils.save(mContext, SpConstant.VIDEO_GOTYEPASSWORD, "");
+                        }
+                    }
+
+                    if (isFirstLoading) {
+                        // 防止多次存储数据
+                             sqlOpenHelper = new SCDataSqlte(mContext);
+                        SQLiteDatabase dbw = sqlOpenHelper.getWritableDatabase();
+
+                        Map<String, String> map = new HashMap<String, String>();
+                        for (int i1 = 0; i1 < roomrolesJoA.size(); i1++) {
+
+                            InfoBean.RoomroleBean roomRole = roomrolesJoA.get(i1);
+                            if ("1".equals(roomRole.getId())) {
+                                SPUtils.save(mContext, SpConstant.USERINFO_R_NAME, roomRole.getName());
+                                SPUtils.save(mContext, SpConstant.USERINFO_LIMIT_CHAT_TIME, roomRole.getLimit_chat_time());
+                                SPUtils.save(mContext, SpConstant.USERINFO_POWER_PRIVATE, roomRole.getPower_whisper());
+                                SPUtils.save(mContext, SpConstant.USERINFO_LIMIT_COLORBAR_TIME, roomRole.getLimit_colorbar_time());
+                                SPUtils.save(mContext, SpConstant.USERINFO_IMAGE, roomRole.getImage());
+                                SPUtils.save(mContext, SpConstant.USERINFO_POWER_VISIT_ROOM, roomRole.getPower_visit_room());
+                            }
+                            dbw.execSQL(
+                                    "insert into roomrole (id,name,type, limit_chat_time, power_whisper,"
+                                            + "limit_colorbar_time,power_upload_pic,limit_account_time,"
+                                            + "status,sort,power_visit_room,style_chat_text,image) values (?,?,?,?,?,?,?,?,?,?,?,?,?);",
+                                    new Object[]{roomRole.getId(), roomRole.getName(), roomRole.getType(), roomRole.getLimit_chat_time(),
+                                            roomRole.getPower_whisper(), roomRole.getLimit_colorbar_time(), roomRole.getPower_upload_pic(),
+                                            roomRole.getLimit_account_time(), roomRole.getStatus(), roomRole.getSort(),
+                                            roomRole.getPower_visit_room(), roomRole.getStyle_chat_text(), roomRole.getImage()});
+                        }
+                        dbw.close();
+                        isFirstLoading = false;
+                    }
+
 
                     if(infoBean.getLoad_ad()!=null&& !TextUtils.isEmpty(infoBean.getLoad_ad().getImage())){
                         Intent intent = new Intent(mContext, AdActivity.class);
