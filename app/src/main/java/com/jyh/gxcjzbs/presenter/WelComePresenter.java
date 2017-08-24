@@ -91,7 +91,7 @@ public class WelComePresenter extends BasePresenter {
                     if(infoBean.getLoad_ad()!=null&& !TextUtils.isEmpty(infoBean.getLoad_ad().getImage())){
                         Intent intent = new Intent(mContext, AdActivity.class);
                         intent.putExtra("image", infoBean.getLoad_ad().getImage());
-                        intent.putExtra("url", infoBean.getLoad_ad().getImage());
+                        intent.putExtra("url", infoBean.getLoad_ad().getUrl());
                         mContext.startActivity(intent);
                         welcomeActivity.overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
                         welcomeActivity.finish();

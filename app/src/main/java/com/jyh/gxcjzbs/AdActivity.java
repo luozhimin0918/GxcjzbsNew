@@ -61,7 +61,10 @@ public class AdActivity extends FragmentActivity implements OnClickListener {
                     countDown(5).subscribe(new Subscriber<Integer>() {
                         @Override
                         public void onCompleted() {
-                           startA_ctivity();
+                            if(!isClickImgAd){
+                                startA_ctivity();
+                            }
+
                         }
 
                         @Override
@@ -162,7 +165,7 @@ public class AdActivity extends FragmentActivity implements OnClickListener {
         handler.sendEmptyMessage(1);
     }
 
-
+    private  boolean  isClickImgAd=false;
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -177,7 +180,7 @@ public class AdActivity extends FragmentActivity implements OnClickListener {
 //                    startActivityForResult(intent, 200);
 //                }
                 if (url != null && !url.equals("")) {
-
+                    isClickImgAd=true;
                     ad_btn.setVisibility(View.GONE);
                     img.setVisibility(View.GONE);
                     findViewById(R.id.webviewId).setVisibility(View.VISIBLE);
@@ -186,6 +189,7 @@ public class AdActivity extends FragmentActivity implements OnClickListener {
                 break;
             case R.id.ad_img_back:
             case R.id.ad_btn:
+                isClickImgAd=true;
                 onBackPressed();
                 break;
         }
@@ -206,7 +210,7 @@ public class AdActivity extends FragmentActivity implements OnClickListener {
 
     private void startA_ctivity() {
         if (isNeedLogin) {
-            Intent LoginIntent = new Intent(AdActivity.this, MainActivity.class);//暂且用MainActivity 代替 Login_one
+            Intent LoginIntent = new Intent(AdActivity.this, Login_One.class);
             LoginIntent.putExtra("from", "welcome");
             startActivity(LoginIntent);
             finish();
