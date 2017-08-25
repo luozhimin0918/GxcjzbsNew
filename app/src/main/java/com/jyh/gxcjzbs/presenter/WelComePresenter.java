@@ -60,6 +60,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 
 public class WelComePresenter extends BasePresenter {
@@ -75,6 +82,8 @@ public class WelComePresenter extends BasePresenter {
     SCDataSqlte     sqlOpenHelper;
     MainApplication application;
     InfoBean.LoadAdBean  loadAd;
+    boolean  toMainActivity=false;
+    boolean  isCountDown=false;
     public WelComePresenter(IBaseView iBaseView) {
         super(iBaseView);
     }
@@ -90,6 +99,51 @@ public class WelComePresenter extends BasePresenter {
             request = new NewVolleyRequest(mContext, mQueue);
             request.setTag(getClass().getName());
         }
+        countDown(2).subscribe(new Subscriber<Integer>() {
+            @Override
+            public void onCompleted() {
+                if(toMainActivity){
+                    // 不用强制登录
+                    welcomeActivity.startActivity(Mainintent);
+                    welcomeActivity.finish();
+                }else{
+                    isCountDown=true;
+                }
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if(toMainActivity){
+                    // 不用强制登录
+                    welcomeActivity.startActivity(Mainintent);
+                    welcomeActivity.finish();
+                }else{
+                    isCountDown=true;
+                }
+            }
+
+            @Override
+            public void onNext(Integer integer) {
+
+            }
+        });
+
+    }
+    private Observable<Integer> countDown(int time){
+        final int countTime = time;
+        return Observable.interval(0,1, TimeUnit.SECONDS)
+                .map(new Func1<Long, Integer>() {
+                    @Override
+                    public Integer call(Long aLong) {
+                        return countTime-aLong.intValue();
+                    }
+                })
+                .take(countTime+1)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread());
 
     }
 
@@ -337,9 +391,9 @@ public class WelComePresenter extends BasePresenter {
             }
         });
     }
-
+    final Intent Mainintent = new Intent(mContext, MainActivity.class);
     private void initAdTo() {
-        final Intent Mainintent = new Intent(mContext, MainActivity.class);
+
 
    /*     loadAd.setImage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1503633407308&di=405961633922af15fae06410c3ed1d4b&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F0155a656711be832f8759f04708441.png");
         loadAd.setUrl("");*/
@@ -352,9 +406,12 @@ public class WelComePresenter extends BasePresenter {
                 mContext.startActivity(LoginIntent);
                 welcomeActivity.finish();
             } else {
-                // 不用强制登录
-                welcomeActivity.startActivity(Mainintent);
-                welcomeActivity.finish();
+                toMainActivity=true;
+                if(isCountDown){
+                    // 不用强制登录
+                    welcomeActivity.startActivity(Mainintent);
+                    welcomeActivity.finish();
+                }
             }
         } else
             // 加载广告
@@ -373,9 +430,12 @@ public class WelComePresenter extends BasePresenter {
                     mContext.startActivity(LoginIntent);
                     welcomeActivity.finish();
                 } else {
-                    // 不用强制登录
-                    welcomeActivity.startActivity(Mainintent);
-                    welcomeActivity.finish();
+                  toMainActivity=true;
+                    if(isCountDown){
+                        // 不用强制登录
+                        welcomeActivity.startActivity(Mainintent);
+                        welcomeActivity.finish();
+                    }
                 }
             }
 
