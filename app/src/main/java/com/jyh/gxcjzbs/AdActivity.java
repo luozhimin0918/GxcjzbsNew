@@ -197,6 +197,7 @@ public class AdActivity extends FragmentActivity implements OnClickListener {
 
     @Override
     public void onBackPressed() {
+        isClickImgAd=true;
         startA_ctivity();
     }
 

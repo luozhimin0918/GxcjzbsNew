@@ -341,7 +341,9 @@ public class WelComePresenter extends BasePresenter {
     private void initAdTo() {
         final Intent Mainintent = new Intent(mContext, MainActivity.class);
 
-        if (loadAd!=null&& !TextUtils.isEmpty(loadAd.getImage())) {
+   /*     loadAd.setImage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1503633407308&di=405961633922af15fae06410c3ed1d4b&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F0155a656711be832f8759f04708441.png");
+        loadAd.setUrl("");*/
+        if (loadAd==null|| TextUtils.isEmpty(loadAd.getImage())) {
             // 不用加载广告
             if (isNeedLogin) {
                 // 强制登录
@@ -361,7 +363,7 @@ public class WelComePresenter extends BasePresenter {
                 intent.putExtra("image", loadAd.getImage());
                 intent.putExtra("url", loadAd.getUrl());
                 mContext.startActivity(intent);
-                welcomeActivity.overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+                welcomeActivity.overridePendingTransition(R.anim.alpha_in, R.anim.alpha_out);
                 welcomeActivity.finish();
             } else {
                 if (isNeedLogin) {
