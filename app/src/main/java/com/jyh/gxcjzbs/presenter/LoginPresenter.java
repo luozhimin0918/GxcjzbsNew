@@ -234,7 +234,7 @@ public class LoginPresenter extends BasePresenter implements View.OnClickListene
         map.put("account", name);
         map.put("password", pwd);
 
-        request.doGet(UrlConstant.URL_LOGIN,true, map,new HttpListener<String>(){
+        request.doGet(UrlConstant.URL_LOGIN,false, map,new HttpListener<String>(){
             private SCDataSqlte dataSqlte;
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
             @Override

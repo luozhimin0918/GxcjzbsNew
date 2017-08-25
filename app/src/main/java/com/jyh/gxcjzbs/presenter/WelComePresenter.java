@@ -2,11 +2,13 @@ package com.jyh.gxcjzbs.presenter;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,7 +23,9 @@ import com.android.volley.VolleyError;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.jyh.gxcjzbs.AdActivity;
+import com.jyh.gxcjzbs.Login_One;
 import com.jyh.gxcjzbs.MainActivity;
+import com.jyh.gxcjzbs.MainApplication;
 import com.jyh.gxcjzbs.R;
 import com.jyh.gxcjzbs.WelcomeActivity;
 import com.jyh.gxcjzbs.annotion.BindObject;
@@ -30,9 +34,11 @@ import com.jyh.gxcjzbs.base.IBaseView;
 import com.jyh.gxcjzbs.common.SpConstant;
 import com.jyh.gxcjzbs.common.UrlConstant;
 import com.jyh.gxcjzbs.fragment.RankFragment;
+import com.jyh.gxcjzbs.model.ChatMsgEntity;
 import com.jyh.gxcjzbs.model.InfoBean;
 import com.jyh.gxcjzbs.model.VersionMole;
 import com.jyh.gxcjzbs.sqlite.SCDataSqlte;
+import com.jyh.gxcjzbs.utils.LoginInfoUtils;
 import com.jyh.gxcjzbs.view.BounceTopEnter;
 import com.jyh.gxcjzbs.view.MaterialDialog;
 import com.jyh.gxcjzbs.view.OnBtnClickL;
@@ -45,6 +51,10 @@ import com.library.util.SPUtils;
 import com.library.util.SystemUtil;
 import com.socks.library.KLog;
 import com.umeng.analytics.MobclickAgent;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +71,10 @@ public class WelComePresenter extends BasePresenter {
     private BounceTopEnter bas_in;
     private SlideBottomExit bas_out;
     private boolean isFirstLoading = true;// 用以防止数据库重复读写
+    protected boolean isNeedLogin = false;// 是否强制登录
     SCDataSqlte     sqlOpenHelper;
+    MainApplication application;
+    InfoBean.LoadAdBean  loadAd;
     public WelComePresenter(IBaseView iBaseView) {
         super(iBaseView);
     }
@@ -69,6 +82,7 @@ public class WelComePresenter extends BasePresenter {
     public void initDefault() {
         MobclickAgent.setDebugMode(false);
         queue = welcomeActivity.getQueue();
+        application = (MainApplication) welcomeActivity.getApplication();
         bas_in = new BounceTopEnter();
         bas_out = new SlideBottomExit();
         testDialog = new MaterialDialog(mContext);
@@ -82,6 +96,7 @@ public class WelComePresenter extends BasePresenter {
     public void initConfig() {
         request.doGet(UrlConstant.URL_INDEX,true, new HttpListener<InfoBean>(){
 
+            @RequiresApi(api = Build.VERSION_CODES.ECLAIR)
             @Override
             protected void onResponse(InfoBean infoBean) {
 
@@ -194,14 +209,12 @@ public class WelComePresenter extends BasePresenter {
                     }
 
 
-                    if(infoBean.getLoad_ad()!=null&& !TextUtils.isEmpty(infoBean.getLoad_ad().getImage())){
-                        Intent intent = new Intent(mContext, AdActivity.class);
-                        intent.putExtra("image", infoBean.getLoad_ad().getImage());
-                        intent.putExtra("url", infoBean.getLoad_ad().getUrl());
-                        mContext.startActivity(intent);
-                        welcomeActivity.overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
-                        welcomeActivity.finish();
-                    }
+
+                    initLogin();
+
+
+                 loadAd=infoBean.getLoad_ad();
+
 
                 }
 
@@ -213,6 +226,159 @@ public class WelComePresenter extends BasePresenter {
             }
         });
     }
+
+    private void initLogin() {
+        String token = SPUtils.getString(mContext, SpConstant.USERINFO_TOKEN);
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("token", token == null ? "" : token);
+
+        request.doGet(UrlConstant.URL_USERINFO,false, map,new HttpListener<String>(){
+            private SQLiteDatabase dbw;
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+            @Override
+            protected void onResponse(String testDialog) {
+
+                String code;
+                try {
+                    JSONObject arg0=new JSONObject(testDialog);
+                    code = arg0.getString("code");
+                    if ("200".equals(code)) {
+                        JSONObject data = arg0.getJSONObject("data");
+                        SPUtils.save(mContext, SpConstant.USERINFO_LOGIN_NAME, data.getString("name"));
+                        SPUtils.save(mContext, SpConstant.USERINFO_LOGIN_UID, data.getString("id"));
+                        SPUtils.save(mContext, SpConstant.USERINFO_LOGIN_RID, data.getString("rid"));
+
+                        dbw = sqlOpenHelper.getWritableDatabase();
+                        Cursor cursor = dbw.rawQuery("select * from roomrole where id=?",
+                                new String[]{data.getString("rid")});
+                        while (cursor.moveToNext()) {
+                            SPUtils.save(mContext, SpConstant.USERINFO_R_NAME, cursor.getString(cursor.getColumnIndex("name")));
+                            SPUtils.save(mContext, SpConstant.USERINFO_LIMIT_CHAT_TIME, cursor.getString(cursor.getColumnIndex("limit_chat_time")));
+                            SPUtils.save(mContext, SpConstant.USERINFO_LIMIT_COLORBAR_TIME, cursor.getString(cursor.getColumnIndex("limit_colorbar_time")));
+                            SPUtils.save(mContext, SpConstant.USERINFO_IMAGE, cursor.getString(cursor.getColumnIndex("image")));
+                            SPUtils.save(mContext, SpConstant.USERINFO_POWER_VISIT_ROOM, cursor.getString(cursor.getColumnIndex("power_visit_room")));
+                            SPUtils.save(mContext, SpConstant.USERINFO_POWER_PRIVATE, cursor.getString(cursor.getColumnIndex("power_whisper")));
+                        }
+                        cursor.close();
+                        dbw.close();
+                    } else {
+                        // 获取登录信息失败
+                        isNeedLogin = LoginInfoUtils.needRequireLogin(mContext);
+                    }
+                } catch (JSONException e) {
+                    // 获取登录信息失败
+                    isNeedLogin = LoginInfoUtils.needRequireLogin(mContext);
+                    e.printStackTrace();
+                }
+
+                inithistory();//执行获取历史聊天数据
+
+            }
+
+            @Override
+            protected void onErrorResponse(VolleyError error) {
+                super.onErrorResponse(error);
+
+                isNeedLogin = LoginInfoUtils.needRequireLogin(mContext);
+                inithistory();//执行获取历史聊天数据
+            }
+        });
+    }
+
+
+    private void inithistory(){
+        request.doGet(UrlConstant.URL_CHATHISTORY,false,new HttpListener<String>(){
+            private SQLiteDatabase dbw;
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+            @Override
+            protected void onResponse(String testDialog) {
+
+
+                JSONObject arg0= null;
+                try {
+                    KLog.i("info", testDialog);
+                    arg0 = new JSONObject(testDialog);
+                    JSONArray array1 = arg0.getJSONArray("data");
+                    List<ChatMsgEntity> chatMsgEntities = new ArrayList<ChatMsgEntity>();
+                    for (int i1 = 0; i1 < array1.length(); i1++) {
+                        JSONObject object1 = (JSONObject) array1.get(i1);
+                        Log.i("info1", object1.toString());
+                        ChatMsgEntity chatMsgEntity = new ChatMsgEntity();
+                        if (object1.getString("f_name") != null && !object1.getString("f_name").equals("")) {
+                            chatMsgEntity.setData(object1.getString("data"));
+                            chatMsgEntity.setIs_checked("");
+                            chatMsgEntity.setT_uid(object1.getString("t_uid"));
+                            chatMsgEntity.setT_rid(object1.getString("t_rid"));
+                            chatMsgEntity.setT_name(object1.getString("t_name"));
+                            chatMsgEntity.setF_name(object1.getString("f_name"));
+                            chatMsgEntity.setF_rid(object1.getString("f_rid"));
+                            chatMsgEntity.setF_uid(object1.getString("f_uid"));
+                            chatMsgEntity.setTime(object1.getString("time"));
+                            chatMsgEntity.setId(object1.getString("id"));
+                            chatMsgEntities.add(chatMsgEntity);
+
+                        }
+                    }
+                    application.setChatMsgEntities(chatMsgEntities);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+
+
+                initAdTo();
+            }
+
+            @Override
+            protected void onErrorResponse(VolleyError error) {
+                super.onErrorResponse(error);
+            }
+        });
+    }
+
+    private void initAdTo() {
+        final Intent Mainintent = new Intent(mContext, MainActivity.class);
+
+        if (loadAd!=null&& !TextUtils.isEmpty(loadAd.getImage())) {
+            // 不用加载广告
+            if (isNeedLogin) {
+                // 强制登录
+                Intent LoginIntent = new Intent(mContext, Login_One.class);
+                LoginIntent.putExtra("from", "welcome");
+                mContext.startActivity(LoginIntent);
+                welcomeActivity.finish();
+            } else {
+                // 不用强制登录
+                welcomeActivity.startActivity(Mainintent);
+                welcomeActivity.finish();
+            }
+        } else
+            // 加载广告
+            if(loadAd!=null&& !TextUtils.isEmpty(loadAd.getImage())){
+                Intent intent = new Intent(mContext, AdActivity.class);
+                intent.putExtra("image", loadAd.getImage());
+                intent.putExtra("url", loadAd.getUrl());
+                mContext.startActivity(intent);
+                welcomeActivity.overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+                welcomeActivity.finish();
+            } else {
+                if (isNeedLogin) {
+                    // 强制登录
+                    Intent LoginIntent = new Intent(mContext, Login_One.class);
+                    LoginIntent.putExtra("from", "welcome");
+                    mContext.startActivity(LoginIntent);
+                    welcomeActivity.finish();
+                } else {
+                    // 不用强制登录
+                    welcomeActivity.startActivity(Mainintent);
+                    welcomeActivity.finish();
+                }
+            }
+
+    }
+
     public void showVersionUpdate(){
         request.doGet(UrlConstant.URL_VERSION,false, new HttpListener<VersionMole>(){
 
