@@ -99,7 +99,7 @@ public class WelComePresenter extends BasePresenter {
             request = new NewVolleyRequest(mContext, mQueue);
             request.setTag(getClass().getName());
         }
-        countDown(2).subscribe(new Subscriber<Integer>() {
+        countDown(1).subscribe(new Subscriber<Integer>() {
             @Override
             public void onCompleted() {
                 if(toMainActivity){
