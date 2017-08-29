@@ -475,7 +475,7 @@ public class WelComePresenter extends BasePresenter {
                                         mContext.startActivity(intent);
                                     }
 
-                                    handler.sendEmptyMessageDelayed(111, 100);
+//                                    handler.sendEmptyMessageDelayed(111, 8000);
                                     testDialog.dismiss();
                                 }
                             });

@@ -291,7 +291,7 @@ public abstract class BaseDialog<T extends BaseDialog<T>> extends Dialog {
         if (isDismissAnim || isShowAnim) {
             return;
         }
-        super.onBackPressed();
+//        super.onBackPressed();
     }
 
     /** dp to px */

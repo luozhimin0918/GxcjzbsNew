@@ -70,4 +70,11 @@ public class WelcomeActivity extends BaseActivity implements WelComePresenter.Ba
         System.exit(0);
         System.gc();
     }
+
+   @Override
+    public void onBackPressed() {
+      finishW();
+    }
+
+
 }
