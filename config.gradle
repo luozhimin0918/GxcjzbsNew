@@ -37,7 +37,8 @@ ext {
             KLogLuo :"com.github.luozhimin0918.LuoComLibJitPack:kloglibraryMy:m1.0.39",
             PercentSupportExtends : "com.github.luozhimin0918.LuoComLibJitPack:percent-support-extends:m1.0.39",
             UmengAnalytics : 'com.umeng.analytics:analytics:latest.integration',
-            BigKooConvenientBanner : 'com.bigkoo:convenientbanner:2.0.5',
-            GoogleZxing : 'com.google.zxing:core:3.0.1'
+            BigKooConvenientBanner : 'com.github.luozhimin0918.LuoComLibJitPack:convenientbanner:m1.0.42',
+            GoogleZxing : 'com.google.zxing:core:3.0.1',
+            UniversalimageLoader :"com.nostra13.universalimageloader:universal-image-loader:1.9.3"
     ]
 }

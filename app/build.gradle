@@ -72,7 +72,7 @@ dependencies {
     compile librarys.UmengAnalytics
     compile librarys.BigKooConvenientBanner
     compile librarys.GoogleZxing
-    compile "com.nostra13.universalimageloader:universal-image-loader:1.9.3"
+    compile librarys.UniversalimageLoader
     apt librarys.butterKnifeCompoler
     /**
      *  publiclibrary  moudle
