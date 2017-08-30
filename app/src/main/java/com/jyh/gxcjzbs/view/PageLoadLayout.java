@@ -1,4 +1,4 @@
-package com.library.widget;
+package com.jyh.gxcjzbs.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.library.R;
+import com.jyh.gxcjzbs.R;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 

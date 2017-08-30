@@ -35,7 +35,7 @@
     <color name="date_picker_text_normal">#ff999999</color>
     <color name="calendar_header">#ff999999</color>
     <color name="date_picker_view_animator">#fff2f2f2</color>
-
+    <color name="transparent">#00000000</color>
     <color name="ampm_text_color">#8c8c8c</color>
     <color name="numbers_text_color">#8c8c8c</color>
 
@@ -44,8 +44,9 @@
     <!--App内部应用色值-->
     <color name="black">#ff000000</color>
     <color name="theme1">#ffffff</color>
-
-
+    <color name="self_bg">#f0f0f0</color>
+    <color name="flash_top">#1177E0</color>
+    <color name="app_title_background">#559ae9</color>
     <color name="pickerview_timebtn_nor">#b8c4cc</color>
     <color name="pickerview_timebtn_pre">#1c9cf2</color>
     <color name="pickerview_bg_topbar">#ffffff</color>
@@ -57,4 +58,8 @@
     <color name="pickerview_bgColor_overlay">#60000000</color>
     <color name="pickerview_bgColor_default">#FFFFFFFF</color>
 
+    <color name="line_color2">#fff7f7f7</color>
+    <color name="selectedPointColor">#000000</color>
+    <color name="unselectedPointColor">#999999</color>
+    <color name="divider">#999797</color>
 </resources>

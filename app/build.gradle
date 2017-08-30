@@ -62,7 +62,7 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     /**
-     * compile  librarys
+     *  compile  librarys
      */
     compile librarys.appcompatV7
     compile librarys.supportConstraintLayout
@@ -70,9 +70,12 @@ dependencies {
     compile librarys.PercentSupportExtends
     compile librarys.KLogLuo
     compile librarys.UmengAnalytics
+    compile librarys.BigKooConvenientBanner
+    compile librarys.GoogleZxing
+    compile "com.nostra13.universalimageloader:universal-image-loader:1.9.3"
     apt librarys.butterKnifeCompoler
     /**
-     * publiclibrary  moudle
+     *  publiclibrary  moudle
      */
     releaseCompile project(path: ':LuoPublicLibrary', configuration: 'release')
     debugCompile project(path: ':LuoPublicLibrary', configuration: 'debug')

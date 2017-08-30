@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.android.percent.support.PercentRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/self_bg"
+   >
+    <com.zhy.android.percent.support.PercentRelativeLayout
+        android:id="@+id/titleLinear"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        app:layout_heightPercent="7%"
+        app:layout_widthPercent="100%"
+        android:background="@color/flash_top"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="广鑫财经"
+            android:textColor="#ffffff"
+            android:layout_marginTop="8dp"
+            android:textSize="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </com.zhy.android.percent.support.PercentRelativeLayout>
+
+    <FrameLayout
+        android:layout_weight="1"
+        app:layout_heightPercent="93%"
+        app:layout_widthPercent="100%"
+        android:layout_below="@+id/titleLinear"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.jyh.gxcjzbs.view.PageLoadLayout
+            android:id="@+id/page_load"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <com.bigkoo.convenientbanner.ConvenientBanner
+                        android:id="@+id/convenientBanner"
+                        android:layout_width="match_parent"
+                        android:layout_height="195dp"
+                        app:canLoop="true" />
+
+                    <LinearLayout
+                        android:id="@+id/rollLiner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"></LinearLayout>
+
+                    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:layout_height="15dp"
+                        android:background="@color/line_color2" />
+
+                    <ImageView
+                        android:id="@+id/playBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="225dp"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/guang_play" />
+
+                    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:background="@color/line_color2" />
+                </LinearLayout>
+
+            </ScrollView>
+
+
+        </com.jyh.gxcjzbs.view.PageLoadLayout>
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/playBigBtn"
+            android:scaleType="fitXY"
+            android:background="@mipmap/live_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+
+
+</com.zhy.android.percent.support.PercentRelativeLayout>
+

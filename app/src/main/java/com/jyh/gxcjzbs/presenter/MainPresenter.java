@@ -16,7 +16,7 @@ import com.jyh.gxcjzbs.R;
 import com.jyh.gxcjzbs.annotion.BindObject;
 import com.jyh.gxcjzbs.base.BasePresenter;
 import com.jyh.gxcjzbs.base.IBaseView;
-import com.jyh.gxcjzbs.fragment.RankFragment;
+import com.jyh.gxcjzbs.fragment.ZhiBoFragment;
 import com.jyh.gxcjzbs.view.TabEntity;
 import com.library.base.http.VolleyRequest;
 
@@ -55,7 +55,7 @@ public class MainPresenter extends BasePresenter {
 
         for (int i = 0; i < mTitles.length; i++) {
             mTabEntities.add(new TabEntity(mTitles[i], mIconSelectIds[i], mIconUnselectIds[i]));
-            mFragments.add(new RankFragment());
+            mFragments.add(new ZhiBoFragment());
         }
         myPagerAdapter=new MyPagerAdapter(mainActivity.getSupportFragmentManager());
         mainActivity.mViewPager.setAdapter(myPagerAdapter);

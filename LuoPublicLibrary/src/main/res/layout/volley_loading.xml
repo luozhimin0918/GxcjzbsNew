@@ -4,31 +4,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+    <com.pnikosis.materialishprogress.ProgressWheel
+        android:id="@+id/id_volley_loading_pro"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_centerInParent="true"
-        android:background="@drawable/shape_widget_toast"
-        android:gravity="center">
+        android:layout_gravity="center"
+        android:tag="progresswheel"
+        app:matProg_barColor="@color/app_title_background"
+        app:matProg_barWidth="4dp"
+        app:matProg_fillRadius="true"
+        android:layout_above="@+id/id_volley_loading_ing"
+        app:matProg_progressIndeterminate="true"/>
 
-        <ImageView
-            android:id="@+id/iv_progress"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerHorizontal="true"/>
-
-        <TextView
-            android:id="@+id/tv_desc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/iv_progress"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/white"
-            android:textSize="12sp"/>
-    </RelativeLayout>
-
-
+    <TextView
+        android:id="@+id/id_volley_loading_ing"
+        android:layout_width="wrap_content"
+        android:textColor="#999999"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="加载中..."/>
 </RelativeLayout>
