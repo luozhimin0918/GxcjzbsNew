@@ -62,7 +62,7 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     /**
-     *  compile  librarys
+     *     compile  librarys
      */
     compile librarys.appcompatV7
     compile librarys.supportConstraintLayout
@@ -75,8 +75,10 @@ dependencies {
     compile librarys.UniversalimageLoader
     apt librarys.butterKnifeCompoler
     /**
-     *  publiclibrary  moudle
+     *     publiclibrary  moudle
      */
     releaseCompile project(path: ':LuoPublicLibrary', configuration: 'release')
     debugCompile project(path: ':LuoPublicLibrary', configuration: 'debug')
+    compile files('libs/gensee_common.jar')
+    compile files('libs/gensee_rtmpplayer.jar')
 }

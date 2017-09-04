@@ -45,7 +45,7 @@ public class ZhiBoFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-//                joinLive();
+                zhiboPresenter.joinLive();
             }
         });
     }

@@ -17,6 +17,10 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.bumptech.glide.Glide;
+import com.gensee.common.ServiceType;
+import com.gensee.entity.InitParam;
+import com.jyh.gxcjzbs.GenseeActivity;
+import com.jyh.gxcjzbs.Login_One;
 import com.jyh.gxcjzbs.MainActivity;
 import com.jyh.gxcjzbs.R;
 import com.jyh.gxcjzbs.WebActivity;
@@ -29,6 +33,11 @@ import com.jyh.gxcjzbs.common.SpConstant;
 import com.jyh.gxcjzbs.common.UrlConstant;
 import com.jyh.gxcjzbs.fragment.ZhiBoFragment;
 import com.jyh.gxcjzbs.model.NavIndextEntity;
+import com.jyh.gxcjzbs.utils.LoginInfoUtils;
+import com.jyh.gxcjzbs.view.BounceTopEnter;
+import com.jyh.gxcjzbs.view.MaterialDialog;
+import com.jyh.gxcjzbs.view.OnBtnClickL;
+import com.jyh.gxcjzbs.view.SlideBottomExit;
 import com.library.base.http.HttpListener;
 import com.library.base.http.NewVolleyRequest;
 import com.library.base.http.VolleyRequest;
@@ -43,6 +52,7 @@ import com.socks.library.KLog;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT;
 import static com.jyh.gxcjzbs.R.id.rollLiner;
 import static java.security.AccessController.getContext;
 
@@ -58,17 +68,113 @@ public class ZhiboPresenter extends BasePresenter {
 
     private static List<NavIndextEntity.DataBean.SlideshowBean> slideShow;
     private List<NavIndextEntity.DataBean.ButtonBean> buttonShow;
-
+    private BounceTopEnter bas_in;
+    private SlideBottomExit bas_out;
+    private List<String> imageList=new ArrayList<>();
+    private Intent intent2 = new Intent(mContext, WebActivity.class);
     public ZhiboPresenter(IBaseView iBaseView) {
         super(iBaseView);
     }
+    private MaterialDialog testDialog;// 网络异常提示Dialog
 
+    public void joinLive(){
+        if (LoginInfoUtils.isCanJoin(mContext)) {
+            String type = SPUtils.getString(mContext, SpConstant.VIDEO_TYPE);
+            if (type != null) {
+                if ("live_gensee".equals(type)) {
+                    initGensee();
+                } else
+                    attemptLogin();
+            }
+        } else {
+            showLoginDialog("zb");
+        }
+    }
+
+    private void attemptLogin() {
+
+    }
+
+    private void initGensee() {
+        zhiBoFragment.showWaitDialog("");
+        InitParam initParam =new InitParam();
+        // domain
+        initParam.setDomain(SPUtils.getString(mContext,SpConstant.VIDEO_GENSEE_SITE));
+        // 编号（直播间号）,如果没有编号却有直播id的情况请使用setLiveId("此处直播id或课堂id");
+        initParam.setNumber(SPUtils.getString(mContext,SpConstant.VIDEO_GENSEE_ID));
+        initParam.setLiveId(SPUtils.getString(mContext,SpConstant.VIDEO_GENSEE_ROOMID));
+        // 站点认证帐号，根据情况可以填""
+        initParam.setLoginAccount("");
+        // 站点认证密码，根据情况可以填""
+        initParam.setLoginPwd("");
+        // 昵称，供显示用
+        initParam.setNickName("");
+        // 加入口令，没有则填""
+        initParam.setJoinPwd(SPUtils.getString(mContext,SpConstant.VIDEO_GENSEE_PWD));
+        // 判断serviceType类型
+        // 站点类型ServiceType.ST_CASTLINE
+        // 直播webcast，ServiceType.ST_MEETING
+        // 会议meeting，ServiceType.ST_TRAINING 培训
+        ServiceType serviceType = null;
+        switch (SPUtils.getString(mContext,SpConstant.VIDEO_GENSEE_CTXZ)) {
+            case "webcast":
+                serviceType = ServiceType.ST_CASTLINE;
+                break;
+            case "meeting":
+                serviceType = ServiceType.ST_MEETING;
+                break;
+            case "training":
+                serviceType = ServiceType.ST_TRAINING;
+                break;
+        }
+       initParam.setServiceType(serviceType);
+        Intent intent = new Intent(mContext, GenseeActivity.class);
+        intent.setFlags(FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        zhiBoFragment.dismissWaitDialog();
+        mContext.startActivity(intent);
+    }
+
+    private void showLoginDialog(final String fromeTo) {
+        if (testDialog!=null&&!testDialog.isShowing()) {
+            testDialog.title("温馨提示").content("您好,您的权限不够,请先登录")//
+                    .btnText("取消", "确定")
+                    .showAnim(bas_in)
+                    .dismissAnim(bas_out)
+                    .show();
+            testDialog.setOnBtnClickL(new OnBtnClickL() {// left btn
+                @Override
+                public void onBtnClick() {
+                    testDialog.dismiss();
+                }
+            }, new OnBtnClickL() {// right btn click listener
+                @Override
+                public void onBtnClick() {
+
+                    testDialog.dismiss();
+                    if (!LoginInfoUtils.isLogin(mContext)) {
+                        Intent intent = new Intent(mContext, Login_One.class);
+                        if(fromeTo.equals("zb")){
+                            intent.putExtra("from", "zb");
+                        }else{
+                            intent.putExtra("from", "null");
+                        }
+
+
+                        mContext.startActivity(intent);
+                    }
+                }
+            });
+            testDialog.setCanceledOnTouchOutside(false);
+        }
+    }
 
     public void initConfig(){
         queue = zhiBoFragment.getQueue();
         request = new NewVolleyRequest(mContext, queue);
+        testDialog = new MaterialDialog(mContext);
+        bas_in = new BounceTopEnter();
+        bas_out = new SlideBottomExit();
     }
-
 
     public void initData(){
         if(!NetUtils.isNetworkAvailable(mContext)){
@@ -113,10 +219,6 @@ public class ZhiboPresenter extends BasePresenter {
 
 
     }
-
-
-    private List<String> imageList=new ArrayList<>();
-    private Intent intent2 = new Intent(mContext, WebActivity.class);
 
     private void optionView() {
         imageList.clear();
