@@ -81,4 +81,5 @@ dependencies {
     debugCompile project(path: ':LuoPublicLibrary', configuration: 'debug')
     compile files('libs/gensee_common.jar')
     compile files('libs/gensee_rtmpplayer.jar')
+    compile 'cn.yuancloud.app:leopardkit:1.1'
 }
